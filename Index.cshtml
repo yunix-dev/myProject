@@ -1,0 +1,86 @@
+﻿@model IEnumerable<DomainUserGroup>
+@{
+    ViewData["Title"] = Constraint.Title + " - 사용자 그룹 관리";
+}
+@section Styles {
+    <link href="~/dist/css/bundleBase.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link href="~/lib/datatables/css/jquery.dataTables.css" rel="stylesheet" />
+    <link href="~/lib/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+}
+
+@section Scripts {
+    <script src="~/lib/jquery/jquery.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/moment.js/moment.min.js"></script>
+    <script src="~/lib/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="~/lib/pdfmake/pdfmake.min.js"></script>
+    <script src="~/lib/pdfmake/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/datatables.min.js"></script>
+
+    <script type="text/javascript" language="JavaScript">
+        $(document).ready(function () {
+            $('#userTb').DataTable({
+                dom: "lfrtip",
+                processing: true,
+                language: {
+                    emptyTable: "데이터가 없습니다."
+                },
+                pageLength: 50,
+            });
+
+            $('.deleteUserBtn').on('click', function () {
+                let result = confirm('삭제하시겠습니까?');
+                if (result) {
+                    let id = $(this).attr('id');
+                    $.ajax({
+                        url: '/Admin/UserGroup/Delete/' + id,
+                        type: 'POST',
+                        success: function () {
+                            window.location.reload();
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>
+}
+
+<partial name="_CommonHeader" />
+<div class="contents">
+    <div class="m_title">사용자 그룹 관리</div>
+    <div class="float_wrap">
+        <div class="fr">
+            <a asp-action="Create" class="sbtn">신규등록</a>
+        </div>
+    </div>
+    <div>
+        <table id="userTb" width="100%" cellpadding="0" cellspacing="0" class="dataLst">
+            <colgroup>
+                <col />
+                <col />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>그룹명</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (DomainUserGroup usergroup in Model)
+                {
+                    <tr>
+                        <td align="center">@usergroup.GroupName</td>
+                        <td align="center">
+                            <a asp-action="Update" asp-route-id="@usergroup.Id"><img src="/images/pencil.png" alt="update" /></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
